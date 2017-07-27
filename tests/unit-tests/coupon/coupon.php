@@ -296,6 +296,8 @@ class WC_Tests_Coupon extends WC_Unit_Test_Case {
 	 * @since 3.0.0
 	 */
 	public function test_dates() {
+		$discounts = new WC_Discounts();
+
 		$valid_coupon = WC_Helper_Coupon::create_coupon();
 		$valid_coupon->set_date_expires( time() + 1000 );
 		$valid_coupon->set_date_created( time() );
@@ -307,8 +309,10 @@ class WC_Tests_Coupon extends WC_Unit_Test_Case {
 		$expired_coupon->set_date_modified( time() - 20 );
 
 		$this->assertInstanceOf( 'WC_DateTime', $valid_coupon->get_date_created() );
-		$this->assertTrue( $valid_coupon->is_valid() );
-		$this->assertFalse( $expired_coupon->is_valid() );
-		$this->assertEquals( $expired_coupon->get_error_message(), $expired_coupon->get_coupon_error( WC_Coupon::E_WC_COUPON_EXPIRED ) );
+		$this->assertTrue( $discounts->is_coupon_valid( $valid_coupon ) );
+
+		$error      = $discounts->is_coupon_valid( $expired_coupon );
+		$error_data = $error->get_error_data();
+		$this->assertEquals( 107, $error_data['code'] );
 	}
 }

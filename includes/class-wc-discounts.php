@@ -754,6 +754,7 @@ class WC_Discounts {
 
 			return new WP_Error( 'invalid_coupon', $message, array(
 				'status' => 400,
+				'code'   => $e->getCode(),
 			) );
 		}
 		return true;
